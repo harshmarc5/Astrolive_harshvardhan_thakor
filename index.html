@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AstroLive Match — Prototype V2</title>
+<style>
+:root{
+  --blue:#1a73e8;--blue2:#e8f0fe;--text:#202124;--muted:#5f6368;
+  --line:#dadce0;--bg:#fff;--surface:#f8f9fa;--green:#188038;--red:#d93025;
+}
+*{box-sizing:border-box}html,body{margin:0;background:#f1f3f4;color:var(--text);font-family:Arial,Helvetica,sans-serif}
+.app{max-width:430px;min-height:100vh;margin:auto;background:#fff}
+.header{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--line)}
+.logo{font-size:18px;font-weight:700;letter-spacing:-.2px}.logo span{color:var(--blue)}
+.header-btn{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:18px;padding:7px 10px;font-size:11px}
+.main{padding:24px 20px 36px}.eyebrow{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.9px;text-transform:uppercase}
+h1{font-size:31px;line-height:1.12;letter-spacing:-.7px;margin:10px 0 12px}.muted{font-size:14px;line-height:1.55;color:var(--muted)}
+.progress{height:4px;background:#f1f3f4;border-radius:8px;margin:16px 0 22px}.progress i{display:block;height:100%;background:var(--blue);border-radius:8px}
+.card{border:1px solid var(--line);border-radius:14px;padding:15px;margin:12px 0;background:#fff}
+.btn{width:100%;padding:14px;border-radius:12px;border:0;font-size:14px;font-weight:700;cursor:pointer}
+.primary{background:var(--blue);color:#fff;margin-top:12px}.secondary{background:#fff;color:var(--blue);border:1px solid var(--line);margin-top:8px}
+.option{width:100%;padding:13px 14px;border:1px solid var(--line);background:#fff;text-align:left;border-radius:11px;margin:6px 0;font-size:14px;cursor:pointer;color:var(--text)}
+.option.sel{border-color:var(--blue);background:var(--blue2)}
+.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{padding:7px 10px;border:1px solid var(--line);border-radius:18px;background:#fff;color:var(--text);font-size:12px;cursor:pointer}.chip.sel{border-color:var(--blue);background:var(--blue2);color:var(--blue)}
+textarea{width:100%;height:98px;border:1px solid var(--line);border-radius:10px;padding:11px;font:14px Arial;resize:none}.hidden{display:none!important}
+.small{font-size:12px;color:var(--muted)}.hint{font-size:11px;color:var(--green);margin-top:7px;min-height:14px}
+.match-card{border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+.top-match{border-color:#aecbfa;background:#fbfdff}
+.match-row{display:flex;align-items:flex-start;gap:11px}.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#f1f3f4;color:var(--blue);font-weight:700;flex:0 0 auto}
+.name{font-weight:700;font-size:14px}.meta{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}.fit{margin-left:auto;font-size:13px;font-weight:700;color:var(--green);text-align:right}.fit small{display:block;color:var(--muted);font-weight:400;font-size:9px}
+.reason{margin-top:10px;padding:10px;border-radius:10px;background:var(--surface);font-size:12px;line-height:1.5;color:var(--muted)}
+.status{font-size:11px;margin-top:8px}.live{color:var(--green)}.wait{color:var(--red)}
+.explore{display:inline-block;margin-top:7px;font-size:10px;color:var(--blue);background:var(--blue2);padding:4px 7px;border-radius:12px}
+.source{font-size:11px;color:var(--muted);margin-top:7px}
+.slider-row{margin:14px 0}.slider-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}.slider-top span:last-child{color:var(--blue);font-weight:700}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.sheet{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(430px,100vw);background:#fff;border-top:1px solid var(--line);border-radius:16px 16px 0 0;padding:18px 20px 26px;box-shadow:0 -6px 24px #0001;z-index:20;max-height:84vh;overflow:auto}
+.overlay{position:fixed;inset:0;background:#0003;z-index:19}.sheet-title{font-weight:700;font-size:17px}.close{float:right;border:0;background:#fff;font-size:22px;color:var(--muted)}
+.kpi{font-size:32px;font-weight:700;color:var(--blue);margin-top:4px}.delta{font-size:42px;font-weight:700;color:var(--green)}
+.scale{display:flex;gap:6px;margin-top:9px}.score{flex:1;text-align:center;padding:11px 2px;border:1px solid var(--line);border-radius:10px;cursor:pointer}.score.sel{border-color:var(--blue);background:var(--blue2);color:var(--blue);font-weight:700}
+.footer{text-align:center;color:#9aa0a6;font-size:10px;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="header"><div class="logo">Astro<span>Live</span> Match</div><button class="header-btn" onclick="openModel()">How matching works</button></header>
+<main class="main">
+
+<section id="s0">
+<div class="eyebrow">Question-first matching</div>
+<h1>Your question deserves the right astrologer.</h1>
+<p class="muted">Start with what you are trying to figure out. AstroLive ranks experts by fit, tradition, language and availability — then explains the recommendation.</p>
+<div class="card"><b>Designed for a live marketplace</b><p class="muted" style="margin:7px 0 0">The goal is not “best astrologer.” It is the best available expert for this specific question.</p></div>
+<button class="btn primary" onclick="go(1)">Ask a question</button>
+<div class="footer">Prototype • Demo data only</div>
+</section>
+
+<section id="s1" class="hidden">
+<div class="progress"><i style="width:25%"></i></div><div class="eyebrow">1 of 4</div>
+<h1>What are you trying to figure out?</h1>
+<p class="muted">Choose the closest topic. You can refine the question next.</p>
+<div id="topics"></div>
+<button class="btn primary" onclick="go(2)" id="continue1" disabled>Continue</button>
+</section>
+
+<section id="s2" class="hidden">
+<div class="progress"><i style="width:50%"></i></div><div class="eyebrow">2 of 4</div>
+<h1>Give us a little context.</h1><p class="muted">This prevents a good astrologer from being the wrong fit for your question.</p>
+<div class="card"><b>Your question</b><textarea id="question" oninput="inferQuestion()" placeholder="e.g. Should I accept this job offer or wait?"></textarea><div class="hint" id="hint"></div></div>
+<div class="card"><b>Preferred tradition</b><div class="chips" id="traditions"></div></div>
+<div class="card"><b>Preferred language</b><div class="chips" id="languages"></div></div>
+<button class="btn primary" onclick="renderMatches();go(3)">Show my matches</button>
+</section>
+
+<section id="s3" class="hidden">
+<div class="progress"><i style="width:75%"></i></div><div class="eyebrow">3 of 4</div>
+<h1>Best fit for this question.</h1><p class="muted">Every recommendation is computed from the inputs above. Fit is not prediction accuracy.</p>
+<div id="matches"></div>
+<div id="fallback"></div>
+<button class="btn secondary" onclick="simulateBusy()">Simulate: top expert just became busy</button>
+</section>
+
+<section id="s4" class="hidden">
+<div class="progress"><i style="width:92%"></i></div><div class="eyebrow">4 of 4</div>
+<h1>You're ready to talk.</h1><p class="muted">Your question and preferences go into a consultation brief so the session can start with substance.</p>
+<div class="card" id="brief"></div>
+<button class="btn primary" onclick="startConsultation()">Start consultation</button>
+<button class="btn secondary" onclick="go(3)">Choose another expert</button>
+</section>
+
+<section id="s5" class="hidden">
+<div class="eyebrow">Consultation complete</div><h1>Did you leave with more clarity?</h1>
+<p class="muted">We are measuring the usefulness of the consultation now — not claiming to measure future prediction accuracy.</p>
+<div class="card"><b>Before the call</b><div class="scale" id="before"></div></div>
+<div class="card"><b>After the call</b><div class="scale" id="after"></div></div>
+<button class="btn primary" onclick="saveSession()">Save feedback</button>
+</section>
+
+<section id="s6" class="hidden">
+<div class="eyebrow">Session recorded</div><h1>Decision Confidence</h1>
+<div class="card"><div class="delta" id="delta">+0</div><div class="muted">Pre → post clarity delta. User-reported experience signal.</div></div>
+<div class="card"><b>Marketplace learning</b><p class="muted">In production, this signal would only influence ranking after minimum sample thresholds and quality checks.</p></div>
+<button class="btn primary" onclick="go(0)">Run another question</button>
+</section>
+
+</main>
+</div>
+
+<div id="overlay" class="hidden overlay" onclick="closeModel()"></div>
+<div id="sheet" class="hidden sheet">
+<button class="close" onclick="closeModel()">×</button>
+<div class="sheet-title">How matching works</div>
+<p class="small" style="margin-top:6px">The prototype uses deterministic scoring so the judge can inspect the trade-offs. Pricing is intentionally not a user-fit signal.</p>
+<div id="sliders"></div>
+<div class="card" style="margin-top:12px"><b>Cold-start policy</b><p class="small">New, verified astrologers receive a small exploration allowance instead of being excluded until they have history. They are never allowed to outrank a strong match purely because they are new.</p></div>
+<div class="card"><b>Supply-side policy</b><p class="small">Ranking is fit-first. The platform can reserve a controlled share of eligible impressions for verified new specialists, then expand or reduce that exposure based on real outcomes.</p></div>
+<div class="card"><b>Unit-economics guardrail</b><p class="small">The user-facing ranking should not simply route demand to the cheapest or highest-margin astrologer. Margin is a marketplace guardrail after fit, quality and user trust—not the primary ranking signal.</p></div>
+</div>
+
+<script>
+const TOPICS=[
+{id:'marriage',label:'❤️ Marriage & relationships',kw:['marriage','shaadi','partner','spouse','wedding','relationship','divorce','breakup']},
+{id:'career',label:'💼 Career & job',kw:['job','career','promotion','offer','interview','resign','switch','appraisal']},
+{id:'business',label:'💰 Business & money',kw:['business','startup','invest','investment','loan','money','funding']},
+{id:'property',label:'🏠 Property & home',kw:['property','house','home','flat','land','rent','real estate']},
+{id:'muhurat',label:'📅 Muhurat / timing',kw:['muhurat','timing','auspicious','good date','shubh','when should i']}
+];
+const TRAD=['Vedic','KP','Nadi','Not sure'];
+const LANG=['Hindi','Gujarati','English','Tamil','Malayalam','Marathi','Any'];
+const AST=[
+{id:'a1',name:'Anita Sharma',years:12,rating:4.8,trad:['Vedic'],lang:['Hindi','Gujarati'],verified:true,newbie:false,topics:{marriage:.95,career:.60,business:.5,property:.4,muhurat:.7},online:true,wait:0,price:20},
+{id:'a2',name:'Rajesh Shah',years:9,rating:4.6,trad:['Vedic','KP'],lang:['Gujarati','Hindi','English'],verified:true,newbie:false,topics:{marriage:.8,career:.7,business:.6,property:.5,muhurat:.6},online:true,wait:0,price:18},
+{id:'a3',name:'Priya Mehta',years:15,rating:4.9,trad:['Vedic'],lang:['Hindi'],verified:true,newbie:false,topics:{marriage:.9,career:.5,business:.4,property:.6,muhurat:.85},online:false,wait:17,price:24},
+{id:'a4',name:'Devika Iyer',years:7,rating:4.5,trad:['Nadi'],lang:['Tamil','English'],verified:true,newbie:false,topics:{marriage:.6,career:.55,business:.5,property:.9,muhurat:.5},online:true,wait:0,price:16},
+{id:'a5',name:'Karan Bhatt',years:14,rating:4.7,trad:['KP'],lang:['Hindi','English','Marathi'],verified:true,newbie:false,topics:{marriage:.55,career:.92,business:.7,property:.4,muhurat:.4},online:true,wait:0,price:19},
+{id:'a6',name:'Meera Nair',years:6,rating:4.3,trad:['Vedic','Nadi'],lang:['Malayalam','English'],verified:true,newbie:true,topics:{marriage:.65,career:.6,business:.55,property:.5,muhurat:.65},online:true,wait:0,price:14},
+{id:'a7',name:'Suresh Pillai',years:20,rating:4.85,trad:['KP','Vedic'],lang:['Tamil','Malayalam','English'],verified:true,newbie:false,topics:{marriage:.6,career:.65,business:.95,property:.55,muhurat:.5},online:true,wait:0,price:22},
+{id:'a8',name:'Farha Sheikh',years:5,rating:4.4,trad:['Vedic'],lang:['Hindi','Urdu','English'],verified:true,newbie:false,topics:{marriage:.7,career:.6,business:.5,property:.45,muhurat:.9},online:true,wait:0,price:15}
+];
+let W={topic:.40,trad:.20,lang:.15,availability:.15,experience:.10};
+let state={topic:null,question:'',trad:'Not sure',lang:'Any',chosen:null,before:3,after:4};
+
+function go(n){document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));document.getElementById('s'+n).classList.remove('hidden');window.scrollTo(0,0)}
+function chip(container,label,onclick,sel=false){return `<button class="chip ${sel?'sel':''}" onclick="${onclick}">${label}</button>`}
+function renderTopics(){document.getElementById('topics').innerHTML=TOPICS.map(t=>`<button class="option" data-id="${t.id}" onclick="topic('${t.id}',this)">${t.label}</button>`).join('')}
+function topic(id,el){state.topic=id;document.querySelectorAll('#topics .option').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');document.getElementById('continue1').disabled=false}
+function renderContext(){
+ document.getElementById('traditions').innerHTML=TRAD.map(t=>chip('traditions',t,`setTrad('${t}',this)`,t==='Not sure')).join('');
+ document.getElementById('languages').innerHTML=LANG.map(t=>chip('languages',t,`setLang('${t}',this)`,t==='Any')).join('');
+}
+function setTrad(v,el){state.trad=v;document.querySelectorAll('#traditions .chip').forEach(x=>x.classList.remove('sel'));el.classList.add('sel')}
+function setLang(v,el){state.lang=v;document.querySelectorAll('#languages .chip').forEach(x=>x.classList.remove('sel'));el.classList.add('sel')}
+function inferQuestion(){
+ state.question=document.getElementById('question').value;let t=state.question.toLowerCase(),best=null,hits=0;
+ TOPICS.forEach(x=>{let h=x.kw.filter(k=>t.includes(k)).length;if(h>hits){hits=h;best=x}});
+ document.getElementById('hint').textContent=best?`Suggested topic: ${best.label}`:(t.length>4?'Pick a topic below if you want to be specific':'');
+ if(best&&!state.topic){state.topic=best.id;document.querySelectorAll('#topics .option').forEach(x=>x.classList.toggle('sel',x.dataset.id===best.id))}
+}
+function score(a){
+ let topic=a.topics[state.topic]??.3;
+ let trad=state.trad==='Not sure'?.75:(a.trad.includes(state.trad)?1:.35);
+ let lang=state.lang==='Any'?.7:(a.lang.includes(state.lang)?1:.25);
+ let avail=a.online?1:Math.max(0,1-a.wait/30);
+ let exp=Math.min(1,a.years/18);
+ let exploration=a.newbie?.045:0;
+ let raw={topic,trad,lang,avail,exp,exploration};
+ let total=(topic*W.topic+trad*W.trad+lang*W.lang+avail*W.availability+exp*W.experience+exploration);
+ return {raw,total};
+}
+function why(a,r){
+ let a1=r.raw.topic>=.8?'strong topic specialization':r.raw.topic>=.5?'moderate topic overlap':'limited topic history';
+ let a2=r.raw.trad===1?`preferred ${state.trad} tradition`:state.trad==='Not sure'?'tradition not constrained':'different tradition';
+ let a3=r.raw.lang===1?`speaks ${state.lang}`:state.lang==='Any'?'language flexible':'language mismatch';
+ let a4=a.online?'available now':`~${a.wait} min wait`;
+ let a5=a.newbie?'new verified specialist · limited exposure data':'established profile';
+ return `${a1} · ${a2} · ${a3} · ${a4} · ${a5}`;
+}
+function renderMatches(){
+ let list=AST.map(a=>{let s=score(a);return{a,s,fit:Math.round(s.total*100)}}).sort((x,y)=>y.fit-x.fit).slice(0,4);
+ document.getElementById('matches').innerHTML=list.map((r,i)=>`
+ <div class="match-card ${i===0?'top-match':''}">
+   <div class="match-row"><div class="avatar">${r.a.name.split(' ').map(x=>x[0]).join('')}</div>
+   <div><div class="name">${r.a.name}</div><div class="meta">${r.a.years} yrs · ${r.a.trad.join('/')} · ${r.a.lang.join('/')}</div></div>
+   <div class="fit">${r.fit}%<small>fit</small></div></div>
+   ${r.a.newbie?'<span class="explore">New verified specialist · exploration</span>':''}
+   <div class="status ${r.a.online?'live':'wait'}">${r.a.online?'● Available now':`◷ ${r.a.wait} min wait`}</div>
+   <div class="reason"><b>Why:</b> ${why(r.a,r.s)}</div>
+   <button class="btn ${i===0?'primary':'secondary'}" onclick="choose('${r.a.id}')">Choose ${r.a.name.split(' ')[0]}</button>
+ </div>`).join('');
+}
+function choose(id){
+ state.chosen=AST.find(a=>a.id===id);
+ let sc=score(state.chosen);
+ document.getElementById('brief').innerHTML=`<div class="brief-row"><b>Question</b><span>${escapeHtml(state.question||'Not specified')}</span></div>
+ <div class="brief-row"><b>Topic</b><span>${TOPICS.find(t=>t.id===state.topic)?.label||'—'}</span></div>
+ <div class="brief-row"><b>Tradition</b><span>${state.trad}</span></div>
+ <div class="brief-row"><b>Language</b><span>${state.lang}</span></div>
+ <div class="brief-row"><b>Matched expert</b><span>${state.chosen.name} · ${Math.round(sc.total*100)}% fit</span></div>
+ <div class="brief-row"><b>Rate</b><span>₹${state.chosen.price}/min</span></div>`;
+ go(4);
+}
+function startConsultation(){go(5);setTimeout(()=>go(5),0)}
+function renderScale(id,selected){document.getElementById(id).innerHTML=[1,2,3,4,5].map(n=>`<div class="score ${n===selected?'sel':''}" onclick="setScore('${id}',${n},this)">${n}</div>`).join('')}
+function setScore(id,v,el){if(id==='before')state.before=v;else state.after=v;el.parentElement.querySelectorAll('.score').forEach(x=>x.classList.remove('sel'));el.classList.add('sel')}
+function saveSession(){let d=state.after-state.before;document.getElementById('delta').textContent=(d>=0?'+':'')+d;go(6)}
+function simulateBusy(){let r=AST.map(a=>{let s=score(a);return{a,s,fit:s.total}}).sort((x,y)=>y.fit-x.fit);if(r.length){r[0].a.online=false;r[0].a.wait=16;renderMatches();document.getElementById('fallback').innerHTML=`<div class="card"><b>Your top match just became busy.</b><p class="muted">Your question stayed intact. The model recomputed the ranking instead of making you start over.</p></div>`}}
+function openModel(){document.getElementById('overlay').classList.remove('hidden');document.getElementById('sheet').classList.remove('hidden');renderSliders()}
+function closeModel(){document.getElementById('overlay').classList.add('hidden');document.getElementById('sheet').classList.add('hidden')}
+function renderSliders(){document.getElementById('sliders').innerHTML=Object.keys(W).map(k=>`<div class="slider-row"><div class="slider-top"><span>${k==='topic'?'Topic fit':k==='trad'?'Tradition':k==='lang'?'Language':k==='availability'?'Availability':k==='experience'?'Experience':'Exploration'}</span><span id="v-${k}">${W[k].toFixed(2)}</span></div><input type="range" min="0" max="1" step=".01" value="${W[k]}" oninput="W['${k}']=+this.value;document.getElementById('v-${k}').textContent=(+this.value).toFixed(2); if(!document.getElementById('s3').classList.contains('hidden'))renderMatches()"></div>`).join('')}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+renderTopics();renderContext();renderScale('before',3);renderScale('after',4);
+</script>
+</body></html>
