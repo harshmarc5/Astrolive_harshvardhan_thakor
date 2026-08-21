@@ -2,6 +2,8 @@ ASTROLIVE MATCH — UPDATED MINIMAL PROTOTYPE
 
 Design: minimal Google-like UI, white/grey, restrained blue accent.
 
+live demo: https://harshmarc5.github.io/Astrolive_harshvardhan_thakor/
+
 Functional MVP:
 1. Question-first topic selection + free-text intent hint
 2. Tradition + language context
