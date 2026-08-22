@@ -14,7 +14,7 @@ The core idea is simple:
 
 ## 🚀 Live Prototype
 
-👉 **[Open AstroLive Match](https://harshmarc5.github.io/Astrolive_harshvardhan_thakor/)**
+👉 **[Open AstroLive Match] https://harshmarc5.github.io/Astrolive_harshvardhan_thakor/
 ## The Problem
 
 AstroLive already exposes useful information about astrologers:
